@@ -1,0 +1,51 @@
+
+>安装 npm install -v webpack查看版本webpack -v版本更新
+  webpack不支持css编译所以，如果要 引入css的时候要先安装npm install css-loader style-loder --save-dev
+>打包
+  1.   webpack index.js index.bundle.js
+         打包前的文件名 打包后的文件名
+  引用的是打包后的js
+  在js中require("./css/index.css")打包时出错提示需要loader，应该要在require中加入loader，
+  格式reuqire("style-loder!css-loader!./css/index.css");
+  第一个loader处理第二个loader处理后的css文件。css-loader是把index.css加到引入index.js的地方，第一个css是处理第二个引入后的css,如果只有require("css-loader!./css/index.css")则只是引入文件，样式并不起作用顺序不能写错
+如果不想在require中写loader，也可以在命令行里用webpack index.js index.bundle.js  --module-bind 'css=style-loader!css-loader'
+  2. 自动打包 webpack  命令webpack watch
+  3. 打包读条在webpack后面加webpack index.js index.bundle.js  --module-bind 'css=style-loader!css-loader' --progress --display-modules看打包的模块--progress --display-modules可以看到打包的依赖，查看打包的原因可以用--progress --display-modules --display-reasons
+  4. 注意打包时候的配置文件可能有版本上的不兼容导致能编译但看不到打包后的文件
+注意路径的指定output:{path:__dirnam+'dist/js',filename:'bundle.js'}注意path是绝对路径
+  5. 指定打包的配置文件 默认的是webpack.config.js，更改为其他的可以用命令webpack --config webpack.dev.config.js 红色的是文件名
+  6. 多个文件打包的时候，如果output是同一个就会被覆盖，只会生成一个文件,不想被覆盖就要用filename设置，常用的是filename:'[name].js'为了简单还可以在package.json里面定义webpack的命令坑：少了个s编译不成功 --display-reasons
+
+
+  7. 设置html自动引入编译后的js,情景打包后的filename有变化，output中设设置打包后的文件名为原文件名加打包的哈希值（不确定）其他配置查看文档，需要每次手动引入打包后的js。方法引入插件html-webpack-plugin，安装插件npm install html-webpack-plugin --save-dev配置文件中引入插件，var htmlWebpackPlugin=require('html-webpack-plugin')，引入后初始化插件，在配置项里加如plugns:[new htmlWebpackPlugin()]，初始化时还可以传参，详见文档，再打包即可。在源文件和打包后的index.html中进行关联，则传参道初始化的对象即可。例：plugins:[{new htmlWebpackPlugin(template:index.html)}]，以index.html根目录下的文件来打包。查看插件的参数npm官网上有
+  8. 上线的版本output里设置publicPath:'http://www.baidu.com/'上线地址，打包后引入的js就会是线上的地址而不是绝对地址
+  9. 压缩html文件 html-webpack-plugins里有相关的配置传参如下new htmlWebpackPlugin(minify{option:value,option:value})         //以去注释和空格为例
+
+  10. 在配置文件中设置一些的参数，在页面里面使用
+
+
+
+  11. 多页面的打包 再次调用html-webpack-plugin
+  12. 指定要引入的模块，对应entry中定义的，使用html-webpack-plugin的参数chunks
+
+  13. 减少http请求将初始化的js包含到编译后的html里进去插件html-webpack-inline-source-plugi
+  14. 使用loader辅助 可以在对应文件里面使用，也可以在配置文件里制定，还可以在cli（package里面配置）
+以es语法转为一般js为例；安装的是babel-loader 和babel-core npm install --save-dev babel-loader babel-core还有babel-preset-env 或者babe-preset-latest
+在babel的官网有使用方法，后两种的写法
+
+在cli中的，要配置两个，package.json 和 config.js
+
+
+
+
+使用模板，要引入相应的模板的loader进行打包。
+处理图片，引入图片一定要用相应的loader去处理，否则打包错误，配置相应的参数（在模板中使用图片，路径要注意用）
+
+
+模板中（webpack1.x的写法）
+
+
+压缩图片img-loader
+
+
+
